@@ -1,6 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const cors = require("corse");
+const cors = require("cors");
 
 const app = express();
 
@@ -14,6 +14,34 @@ app.use(bodyParser.json());
 
 // Parse requests of content-type - application/x-www-from-urlencoded
 app.use(bodyParser.urlencoded({extended: true}));
+
+
+//DataBase
+const db = require("./app/models");
+
+/* Just for development */
+const Role = db.role;
+
+db.sequelize.sync({force:true}).then(() => {
+    console.log('Drop and Resync Db');
+    initial();
+});
+
+function initial(){
+    Role.create({
+        id: 1,
+        name: "user"
+    });
+    Role.create({
+        id: 2,
+        name: "admin"
+    });
+}
+/* end Just for development */
+
+/* Just for Production
+   db.sequelize.sync();
+   end Just for Production */
 
 // Simple route
 app.get("/", (req,res) =>{
