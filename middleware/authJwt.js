@@ -1,6 +1,6 @@
-const jwt = require("jsonwebtoken");
-const config =require("../config/auth.config.js");
-const db =require("../models");
+import { verify } from "jsonwebtoken";
+import { secret } from "../config/auth.config.js";
+import db from "../models";
 const User = db.User;
 
 verifyToken = (req, res, next) => {
@@ -12,7 +12,7 @@ verifyToken = (req, res, next) => {
         });
     }
 
-    jwt.verify(token,config.secret, (err, decoded) => {
+    verify(token,secret, (err, decoded) => {
         if(err) {
             return res.status(401).send({
                 message: "Unautorized!"

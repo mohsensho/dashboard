@@ -1,4 +1,4 @@
-const db = require("../models");
+import db from "../models";
 const ROLES =db.ROLES;
 const User = db.user;
 
@@ -48,4 +48,4 @@ const verifySignUp = {
     checkDuplicateUsernameOrEmail: checkDuplicateUsernameOrEmail,
     checkRolesExisted: checkRolesExisted
 };
-module.exports = verifySignUp;
+export default verifySignUp;

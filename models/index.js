@@ -1,20 +1,20 @@
-const config = require("../config/db.config.js");
+import { DB, USER, PASSWORD, HOST, dialect as _dialect, pool as _pool } from "../config/db.config.js";
 
-const Sequelize = require("sequelize");
+import Sequelize from "sequelize";
 const sequelize = new Sequelize(
-    config.DB,
-    config.USER,
-    config.PASSWORD,
+    DB,
+    USER,
+    PASSWORD,
     {
-        host: config.HOST,
-        dialect: config.dialect,
+        host: HOST,
+        dialect: _dialect,
         operatorsAliases: false,
 
         pool: {
-            max: config.pool.max,
-            min: config.pool.min,
-            acquire: config.pool.acquire,
-            idle: config.pool.idle
+            max: _pool.max,
+            min: _pool.min,
+            acquire: _pool.acquire,
+            idle: _pool.idle
         }
     }
 );
@@ -39,4 +39,4 @@ db.user.belongsToMany(db.role,{
 
 db.ROLES = ["user", "admin"];
 
-module.exports = db;
+export default db;

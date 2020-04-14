@@ -5,10 +5,10 @@ GET /api/test/all
 GET /api/test/user for loggedin users (user/moderator/admin)
 GET /api/test/admin for admin
 */
-const { authJwt } = require("../middleware");
-const controller = require("../controllers/user.controller");
+import { authJwt } from "../middleware";
+import { allAccess, userBoard, adminBoard } from "../controllers/user.controller";
 
-module.exports = function(app) {
+export default function(app) {
   app.use(function(req, res, next) {
     res.header(
       "Access-Control-Allow-Headers",
@@ -17,17 +17,17 @@ module.exports = function(app) {
     next();
   });
 
-  app.get("/api/test/all", controller.allAccess);
+  app.get("/api/test/all", allAccess);
 
   app.get(
     "/api/test/user",
     [authJwt.verifyToken],
-    controller.userBoard
+    userBoard
   );
 
   app.get(
     "/api/test/admin",
     [authJwt.verifyToken, authJwt.isAdmin],
-    controller.adminBoard
+    adminBoard
   );
 };

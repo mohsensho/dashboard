@@ -1,6 +1,6 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const cors = require("cors");
+import express from "express";
+import { json, urlencoded } from "body-parser";
+import cors from "cors";
 
 const app = express();
 
@@ -10,19 +10,19 @@ var corsOptions = {
 app.use(cors(corsOptions));
 
 // Pasre requests of content-type - application/json
-app.use(bodyParser.json());
+app.use(json());
 
 // Parse requests of content-type - application/x-www-from-urlencoded
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(urlencoded({extended: true}));
 
 
 //DataBase
-const db = require("./app/models");
+import { role, sequelize } from "./models";
 
 /* Just for development */
-const Role = db.role;
+const Role = role;
 
-db.sequelize.sync({force:true}).then(() => {
+sequelize.sync({force:true}).then(() => {
     console.log('Drop and Resync Db');
     initial();
 });
@@ -43,16 +43,16 @@ function initial(){
    db.sequelize.sync();
    end Just for Production */
 
-// Simple route
+// Route
 app.get("/", (req,res) =>{
     res.json({ message: "Welcome to Software Team Dashboard!" });
 });
+
+require('./routes/auth.routes').default(app);
+require('./routes/user.routes.js').default(app);
 
 // Set port, listen for request
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}.`);
 });
-// routes
-require('./app/routes/auth.routes')(app);
-require('./app/routes/user.routes')(app);
