@@ -82,6 +82,19 @@ exports.findAll = (req, res) => {
 
   //var condition = { taskname, resource };
   Task.findAll({ 
+    include: [{
+      model: User,
+      required: true
+     },{
+      model: TaskType,
+      required: true
+     },{
+      model: TaskStatus,
+      required: true
+     },{
+      model: Customer,
+      required: true
+     }],
     where: [{},
       taskname,
       taskdatefrom,
@@ -98,9 +111,7 @@ exports.findAll = (req, res) => {
       tasktypeid,
       customerid,
       taskstatusid,
-    ], 
-    include: [ {model: User}]
-  
+    ]  
   })
     .then(data => {
       res.send(data);
