@@ -1,3 +1,8 @@
+
+.container, .container-lg, .container-md, .container-sm, .container-xl {
+    max-width: 100%;
+
+}
 label {
   display: block;
   margin-top: 10px;
@@ -10,8 +15,8 @@ label {
 
 .card {
   background-color: #f7f7f7;
-  padding: 20px 25px 30px;
-  margin: 0 auto 25px;
+  padding: 5px !important;
+  margin: 0 auto;
   margin-top: 50px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -19,8 +24,14 @@ label {
   -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
   -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
   box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+  width: 100%;
 }
-
+/*.table-responsive{
+  padding-bottom: 200px;
+}*/
+.react-datepicker__input-container input {
+  width: 120px;
+}
 .profile-img-card {
   width: 96px;
   height: 96px;
@@ -29,4 +40,7 @@ label {
   -moz-border-radius: 50%;
   -webkit-border-radius: 50%;
   border-radius: 50%;
+}
+.table td, .table th {
+  padding: .15rem !important;
 }

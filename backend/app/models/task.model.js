@@ -10,7 +10,7 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING
         },
         taskDate: {
-            type: Sequelize.DATE
+            type: Sequelize.STRING
         },
         numberOfResource: {
             type: Sequelize.INTEGER
@@ -22,7 +22,7 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.INTEGER
         },
         ECD: {
-            type: Sequelize.DATE
+            type: Sequelize.STRING
         },
         timeSpent: {
             type: Sequelize.INTEGER

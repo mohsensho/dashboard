@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from "react";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import AuthService from "../services/auth.service";
 import DashService from "../services/dash.service";
 
@@ -8,26 +9,217 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCoffee } from "@fortawesome/free-solid-svg-icons";
+import TaskLoad from "./task-load.component";
 
 export default class BoardUser extends Component {
     constructor(props) {
       super(props);
-  
+      // for search task
+      this.searchOnChangeTaskName = this.searchOnChangeTaskName.bind(this);
+      this.searchOnChangeTaskType = this.searchOnChangeTaskType.bind(this);
+      this.searchOnChangeCustomerId = this.searchOnChangeCustomerId.bind(this);
+      this.searchOnChangeTaskstatusId = this.searchOnChangeTaskstatusId.bind(this);
+      this.handleDateChange = this.handleDateChange.bind(this);
+      this.searchOnChangeResourceNum = this.searchOnChangeResourceNum.bind(this);
+      this.searchOnChangeRoundNum = this.searchOnChangeRoundNum.bind(this);
+      this.searchOnChangeCompleteNum = this.searchOnChangeCompleteNum.bind(this);
+      this.searchOnChangeTimeSpent = this.searchOnChangeTimeSpent.bind(this);
+
+      //this.setState({someValue:false});
+      this.setState({searchResult:"Nasrin"});
+
       this.state = {
-        content: "",
+        currentUser: AuthService.getCurrentUser(),
+        contentTask: "",
+        contentTaskType: "",
+        contentCustomer: "",
+        contentTaskStatus: "",
+        //for search task
+        searchTaskName: "",
+        searchTaskDate: "",
+        searchResourceNum: "",
+        searchRoundNum: "",
+        searchCompleteNum: "",
+        searchECDDate: "",
+        searchTimeSpent: "",
+        searchUserId: AuthService.getCurrentUser().id,
+        searchTaskType: "",
+        searchCustomerId: "",
+        searchTaskstatusId: "",
+        message: "",
+        taskDate: "",
+        ECDDate: "",
+        startDate: "",
+        endDate: "",
+        fromECDTime: "",
+        toECDTime: "",
+        searchResult: ""
       };
     }
-  
+  // for search task 
+  state = {
+    taskDate: new Date(),
+    ECDDate: new Date(),
+  }
+
+  searchOnChangeTimeSpent(e) {
+    this.setState({
+      searchTimeSpent: e.target.value
+    });
+  }
+  searchOnChangeCompleteNum(e) {
+    this.setState({
+      searchCompleteNum: e.target.value
+    });
+  }
+  searchOnChangeRoundNum(e) {
+    this.setState({
+      searchRoundNum: e.target.value
+    });
+  }
+
+  searchOnChangeResourceNum(e) {
+    this.setState({
+      searchResourceNum: e.target.value
+    });
+  }
+  searchOnChangeTaskName(e) {
+    this.setState({
+      searchTaskName: e.target.value
+    });
+  }
+  searchOnChangeTaskType(e) {
+    this.setState({
+      searchTaskType: e.target.value
+    });
+  }
+  searchOnChangeCustomerId(e){
+    this.setState({
+      searchCustomerId: e.target.value
+    });
+  }
+  searchOnChangeTaskstatusId(e){
+    this.setState({
+      searchTaskstatusId: e.target.value
+    });
+  }
+  handleDateChange(dateName, dateValue) {
+    //let { startDate, endDate, fromECDTime, toECDTime } = this.state;
+    if (dateName === 'startDateTime') {
+      this.state.startDate = dateValue;
+    } else if (dateName === 'endDateTime') {
+      this.state.endDate = dateValue;
+    } else if (dateName === 'fromECDTime') {
+      this.state.fromECDTime = dateValue;
+    } else if (dateName === 'toECDTime') {
+      this.state.toECDTime = dateValue;
+    }
+    this.setState({
+    });
+  }   
+  handleSearch(e) {
+    //e.preventDefault();
+    
+    this.setState({
+      message: "",
+      successful: false
+    });
+    //this.form.validateAll();
+
+    //if (this.checkBtn.context._errors.length === 0) {
+    //let trimTaskDate = this.state.taskDate;
+    //trimTaskDate = String(trimTaskDate).substring(4, 16);
+    //console.log("ecd date is= "+this.state.ECDDate)
+
+    DashService.searchTask(
+      this.state.searchTaskName,
+      this.state.startDate,
+      this.state.endDate,
+      this.state.searchResourceNum,
+      this.state.searchRoundNum,
+      this.state.searchCompleteNum,
+      this.state.fromECDTime,
+      this.state.toECDTime,
+      this.state.searchTimeSpent,
+      this.state.searchUserId,
+      this.state.searchTaskType,
+      this.state.searchCustomerId,
+      this.state.searchTaskstatusId
+    ).then(
+      
+      response => {
+        this.setState({
+          message: "Search Result",
+          successful: true,
+          searchResult : response
+        });
+
+        
+        
+        //this.setState({someValue:false}); 
+        //this.refreshTaskList = response;
+        //` console.log(this.state.searchResult);
+        //this.state.contentTask=response;
+      },
+      error => {
+        const resMessage =
+          (error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+          error.message ||
+          error.toString();
+        this.setState({
+          successful: false,
+          message: resMessage
+        });
+      }
+    );
+  }
     componentDidMount() {
-        DashService.getAllTask().then(
+    
+      DashService.getAllTaskType().then(
         (response) => {
           this.setState({
-            content: response.data,
+            contentTaskType: response.data,
           });
         },
         (error) => {
           this.setState({
-            content:
+            contentTaskType:
+              (error.response &&
+                error.response.data &&
+                error.response.data.message) ||
+              error.message ||
+              error.toString(),
+          });
+        }
+      );
+      DashService.getAllCustomer().then(
+        (response) => {
+          this.setState({
+            contentCustomer: response.data,
+          });
+        },
+        (error) => {
+          this.setState({
+            contentCustomer:
+              (error.response &&
+                error.response.data &&
+                error.response.data.message) ||
+              error.message ||
+              error.toString(),
+          });
+        }
+      );
+      DashService.getAllTaskStatus().then(
+        (response) => {
+          this.setState({
+            contentTaskStatus: response.data,
+          });
+        },
+        (error) => {
+          this.setState({
+            contentTaskStatus:
               (error.response &&
                 error.response.data &&
                 error.response.data.message) ||
@@ -37,36 +229,34 @@ export default class BoardUser extends Component {
         }
       );
     }
-    _renderObject(){
-		return Object.entries(this.state.content).map(([key, value], i) => {
+
+  loadTaskTypes(){
+		return Object.entries(this.state.contentTaskType).map(([key, value], i) => {
 			return (
-				<div key={key}>
-					id: {value.id} ;
-					Task name: {value.taskName}
-                    taskDate: {value.id} ;
-                    numberOfResource: {value.id} ;
-                    numberOfRound: {value.id} ;
-                    percentOfComplete: {value.id} ;
-                    ECD: {value.id} ;
-                    timeSpent: {value.id} ;
-                    createdAt: {value.id} ;
-                    updatedAt: {value.id} ;
-                    userId: {value.id} ;
-                    tasktypeId: {value.id} ;
-                    customerId: {value.id} ;
-                    taskstatusId: {value.id} ;
-				</div>
-			)
+        <option value={value.id}>{value.tType}</option>
+			);
 		})
-	}
+  }
+  loadCustomers(){
+		return Object.entries(this.state.contentCustomer).map(([key, value], i) => {
+			return (
+        <option value={value.id}>{value.cName}</option>
+			);
+		})
+  }
+  loadTaskStatus(){
+		return Object.entries(this.state.contentTaskStatus).map(([key, value], i) => {
+			return (
+        <option value={value.id}>{value.tStatus}</option>
+			);
+		})
+  }
+
+  
+
     render() {
-    //   return (
-    //     <div className="container">
-    //       <header className="jumbotron">
-    //         <h3>{this._renderObject()}</h3>
-    //       </header>
-    //     </div>
-    //   );
+      const { currentUser } = this.state;
+    
         return(
             <Fragment>
             <CSSTransitionGroup
@@ -83,190 +273,199 @@ export default class BoardUser extends Component {
                     <Card className="main-card mb-3">
                       <div className="table-responsive">
                         <table className="align-middle mb-0 table table-borderless table-striped table-hover">
-                          <thead>
-                            <tr>
-                              <th className="text-center">#</th>
-                              <th>Name</th>
-                              <th className="text-center">Date</th>
-                              <th className="text-center">Customer</th>
-                              <th className="text-center"># Of Resources</th>
-                              <th className="text-center"># Round</th>
-                              <th className="text-center">% Complete</th>
-                              <th className="text-center">ECD</th>
-                              <th className="text-center">Time Spent</th>
-                              <th className="text-center">Status</th>
-                              <th className="text-center">Created By</th>
-                            </tr>
-                          </thead>
                           <tbody>
-                            <tr>
-                              <td className="text-center text-muted">
-                                <InputGroupText>
-                                  <i className="header-icon pe-7s-search icon-gradient bg-plum-plate"></i>
-                                </InputGroupText>
-                              </td>
-                              <td>
-                                <InputGroup size="sm">
-                                  <Input />
-                                </InputGroup>
-                              </td>
-                              <td className="text-center">
-                                <InputGroup size="sm">
-                                  <InputGroupAddon addonType="prepend">
+                          <tr>
+                                <td className="text-center">
                                     <InputGroupText>
-                                      <span style={{ fontSize: 10 }}>From</span>
+                                    <span style={{ fontSize: 10 }}>Type</span>
                                     </InputGroupText>
-                                    <DatePicker
-                                      selected={this.state.startDate}
-                                      onChange={this.handleChange}
-                                    />
-                                  </InputGroupAddon>
-                                  <InputGroupAddon addonType="prepend">
+                                    <InputGroup size="sm">
+                                    <select id="taskTypesId" className="form-control" value={this.state.inTaskType} searchOnChange={this.searchOnChangeTaskType}>
+                                        {this.loadTaskTypes()}
+                                    </select>
+                                    </InputGroup>
+                                </td>
+                                <td>
                                     <InputGroupText>
-                                      <span
+                                    <span style={{ fontSize: 10 }}>Name</span>
+                                    </InputGroupText>
+                                    <InputGroup size="sm">
+                                    <Input 
+                                        name="searchTaskName"
+                                        value={this.state.searchTaskName}
+                                        onChange={this.searchOnChangeTaskName}/>
+                                    </InputGroup>
+                                </td>
+                                <td className="text-center">
+                                    <InputGroup size="sm">
+                                    <InputGroupText>
+                                        <span style={{ fontSize: 10 }}>From</span>
+                                    </InputGroupText>
+                                    <InputGroupAddon addonType="prepend">
+                                    <DatePicker
+                                        id="start-date-time"
+                                        name="startDateTime"
+                                        selected={this.state.startDate}
+                                        value={this.state.startDate}
+                                        showPopperArrow={false}
+                                        format='MM-dd-yyyy'
+                                        onChange={date => this.handleDateChange('startDateTime', date)}
+                                    />
+                                    </InputGroupAddon>
+                                    </InputGroup>
+                                </td>
+                                <td>
+                                    <InputGroup size="sm">
+                                    <InputGroupText>
+                                        <span
                                         style={{ fontSize: 10, paddingRight: 12 }}
-                                      >
+                                        >
                                         To
-                                      </span>
+                                        </span>
                                     </InputGroupText>
-                                    <DatePicker
-                                      selected={this.state.startDate}
-                                      onChange={this.handleChange}
-                                    />
-                                  </InputGroupAddon>
-                                </InputGroup>
-                              </td>
-                              <td className="text-center">
-                                <InputGroup size="sm">
-                                  <select className="form-control">
-                                    <option>Intel</option>
-                                    <option>Samsung</option>
-                                    <option>Micron</option>
-                                  </select>
-                                </InputGroup>
-                              </td>
-                              <td className="text-center">
-                                <InputGroup size="sm">
-                                  <Input />
-                                </InputGroup>
-                              </td>
-                              <td className="text-center">
-                                <InputGroup size="sm">
-                                  <Input />
-                                </InputGroup>
-                              </td>
-                              <td className="text-center">
-                                <InputGroup size="sm">
-                                  <Input />
-                                </InputGroup>
-                              </td>
-                              <td className="text-center">
-                                <InputGroup size="sm">
-                                  <InputGroupAddon addonType="prepend">
+                                    <InputGroupAddon addonType="prepend">
+                                        <DatePicker                                            
+                                            id="end-date-time"
+                                            name="endDateTime"
+                                            selected={this.state.endDate}
+                                            value={this.state.endDate}
+                                            showPopperArrow={false}
+                                            format='MM-dd-yyyy'
+                                            onChange={date => this.handleDateChange('endDateTime', date)}                                     
+                                        />
+                                        </InputGroupAddon>
+                                    </InputGroup>
+                                </td>
+                                <td className="text-center">
                                     <InputGroupText>
-                                      <span style={{ fontSize: 10 }}>From</span>
+                                    <span style={{ fontSize: 10 }}>Customer</span>
                                     </InputGroupText>
-                                    <DatePicker
-                                      selected={this.state.startDate}
-                                      onChange={this.handleChange}
-                                    />
-                                  </InputGroupAddon>
-                                  <InputGroupAddon addonType="prepend">
+                                    <InputGroup size="sm">
+                                    <select id="customersId" className="form-control" value={this.state.searchCustomerId} onChange={this.searchOnChangeCustomerId}>
+                                        {this.loadCustomers()}
+                                    </select>
+                                    </InputGroup>
+                                </td>
+                                <td className="text-center">
                                     <InputGroupText>
-                                      <span
-                                        style={{ fontSize: 10, paddingRight: 12 }}
-                                      >
-                                        To
-                                      </span>
+                                    <span style={{ fontSize: 10 }}>#Resource</span>
                                     </InputGroupText>
-                                    <DatePicker
-                                      selected={this.state.startDate}
-                                      onChange={this.handleChange}
+                                    <InputGroup size="sm">
+                                    <Input  
+                                        name="searchResourceNum"
+                                        value={this.state.searchResourceNum}
+                                        onChange={this.searchOnChangeResourceNum}
                                     />
-                                  </InputGroupAddon>
-                                </InputGroup>
-                              </td>
-                              <td className="text-center">
-                                <InputGroup size="sm">
-                                  <Input />
-                                </InputGroup>
-                              </td>
-                              <td className="text-center">
-                                <InputGroup>
-                                  <select className="form-control">
-                                    <option>Active</option>
-                                    <option>Pending</option>
-                                    <option>Disabled</option>
-                                  </select>
-                                </InputGroup>
-                              </td>
-                              <td>
-                                <InputGroup size="sm">
-                                  <Input />
-                                </InputGroup>
-                              </td>
+                                    </InputGroup>
+                                </td>
+                                <td className="text-center">
+                                    <InputGroupText>
+                                    <span style={{ fontSize: 10 }}>#Round</span>
+                                    </InputGroupText>
+                                    <InputGroup size="sm">
+                                    <Input 
+                                        name="searchRoundNum"
+                                        value={this.state.searchRoundNum}
+                                        onChange={this.searchOnChangeRoundNum}
+                                    />
+                                    </InputGroup>
+                                </td>
+                                <td className="text-center">
+                                    <InputGroup size="sm">
+                                    <InputGroupText>
+                                        <span style={{ fontSize: 10 }}>ECD From</span>
+                                    </InputGroupText>
+                                    <InputGroupAddon addonType="prepend">
+                                    <DatePicker
+                                        id="fromECD"
+                                        name="fromECDTime"
+                                        selected={this.state.fromECDTime}
+                                        value={this.state.fromECDTime}
+                                        showPopperArrow={false}
+                                        format='MM-dd-yyyy'
+                                        onChange={date => this.handleDateChange('fromECDTime', date)} 
+                                    />
+                                    </InputGroupAddon>
+                                    </InputGroup>
+                                </td>
+                                <td  className="text-center">
+                                    <InputGroup size="sm">
+                                    <InputGroupText>
+                                        <span
+                                        style={{ fontSize: 10}}>ECD To</span>
+                                    </InputGroupText>
+                                    <InputGroupAddon addonType="prepend">
+                                    <DatePicker
+                                        id="toECD"
+                                        name="toECDTime"
+                                        selected={this.state.toECDTime}
+                                        value={this.state.toECDTime}
+                                        showPopperArrow={false}
+                                        format='MM-dd-yyyy'
+                                        onChange={date => this.handleDateChange('toECDTime', date)}                                        
+                                    />
+                                    </InputGroupAddon>
+                                    </InputGroup>
+                                </td>
+                                <td className="text-center">
+                                    <InputGroupText>
+                                    <span style={{ fontSize: 10 }}>%Complete To</span>
+                                    </InputGroupText>
+                                    <InputGroup size="sm">
+                                    <Input 
+                                        name="searchCompleteNum"
+                                        value={this.state.searchCompleteNum}
+                                        onChange={this.searchOnChangeCompleteNum}
+                                    />
+                                    </InputGroup>
+                                </td>
+                                <td className="text-center">
+                                    <InputGroupText>
+                                    <span style={{ fontSize: 10 }}>Time Spent To</span>
+                                    </InputGroupText>
+                                    <InputGroup size="sm">
+                                    <Input  
+                                        name="searchTimeSpent"
+                                        value={this.state.searchTimeSpent}
+                                        onChange={this.searchOnChangeTimeSpent}
+                                    />
+                                    </InputGroup>
+                                </td>
+                                <td className="text-center">
+                                    <InputGroupText>
+                                    <span style={{ fontSize: 10 }}>Status</span>
+                                    </InputGroupText>
+                                    <InputGroup size="sm">
+                                    <select id="taskStatusId" className="form-control" value={this.state.inTaskstatusId} onChange={this.searchOnChangeTaskstatusId}>
+                                        {this.loadTaskStatus()}
+                                    </select>
+                                    </InputGroup>
+                                </td>
+                                <td></td>
                             </tr>
                             <tr>
-                              <td className="text-center text-muted">1</td>
-                              <td>Task Name</td>
-                              <td className="text-center">12-12-2020 8:40:20</td>
-                              <td className="text-center">Intel</td>
-                              <td className="text-center">5</td>
-                              <td className="text-center">4</td>
-                              <td className="text-center">20 %</td>
-                              <td className="text-center">07-07-2020</td>
-                              <td className="text-center">234 hrs</td>
-                              <td className="text-center">
-                                <div className="badge badge-success">Completed</div>
-                              </td>
-                              <td>Mohsen Shojaeifar</td>
+                                <td>
+                                    <button className="btn-wide btn btn-info" onClick={() => this.handleSearch()}>Search</button>
+                                </td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
                             </tr>
-                            <tr>
-                              <td className="text-center text-muted">1</td>
-                              <td>Task Name</td>
-                              <td className="text-center">12-12-2020 8:40:20</td>
-                              <td className="text-center">Intel</td>
-                              <td className="text-center">5</td>
-                              <td className="text-center">4</td>
-                              <td className="text-center">
-                                <Progress className="mb-3" value="25">
-                                  25%
-                                </Progress>
-                              </td>
-                              <td className="text-center">07-07-2020</td>
-                              <td className="text-center">234 hrs</td>
-                              <td className="text-center">
-                                <div className="badge badge-warning">Pending</div>
-                              </td>
-                              <td>Mohsen Shojaeifar</td>
-                            </tr>
-                            <tr>
-                              <td className="text-center text-muted">1</td>
-                              <td>Task Name</td>
-                              <td className="text-center">12-12-2020 8:40:20</td>
-                              <td className="text-center">Intel</td>
-                              <td className="text-center">5</td>
-                              <td className="text-center">4</td>
-                              <td className="text-center">20 %</td>
-                              <td className="text-center">07-07-2020</td>
-                              <td className="text-center">234 hrs</td>
-                              <td className="text-center">
-                                <div className="badge badge-danger">
-                                  In progress
-                                </div>
-                              </td>
-                              <td>Mohsen Shojaeifar</td>
-                            </tr>
+                            <TaskLoad searchResult={this.state.searchResult}  />
                           </tbody>
                         </table>
-                      </div>
-                      <div className="d-block text-center card-footer">
-                        <button className="btn-wide btn btn-success">Add</button>
                       </div>
                     </Card>
                   </Col>
                 </Row>
-                
               </div>
             </CSSTransitionGroup>
           </Fragment>

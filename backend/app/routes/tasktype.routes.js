@@ -3,13 +3,13 @@ module.exports = app => {
   
     var router = require("express").Router();
   
-    // // Create a new Tutorial
-     router.post("/", tasktype.create);
+    // // // Create a new 
+    //  router.post("/", tasktype.create);
   
-    // Retrieve all Tutorials
+    // Retrieve all 
     router.get("/", tasktype.findAll);
   
-    // Retrieve a single Tutorial with id
+    // Retrieve a single TaskType with id
     router.get("/:id", tasktype.findOne);
   
     app.use('/api/tasktype', router);

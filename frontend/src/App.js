@@ -11,6 +11,7 @@ import Home from "./components/home.component";
 import Profile from "./components/profile.component";
 import BoardUser from "./components/board-user.component";
 import DashBoard from "./components/dash-board.component";
+import AddTask from "./components/add-task.component";
 import BoardAdmin from "./components/board-admin.component";
 
 class App extends Component {
@@ -22,6 +23,9 @@ class App extends Component {
       showModeratorBoard: false,
       showAdminBoard: false,
       currentUser: undefined,
+      showDashboard: false,
+      showSearch: true,
+      showAdd: false
     };
   }
 
@@ -67,13 +71,13 @@ class App extends Component {
                 </li>
               )}
               */}
-              {showDashboard && (
+              {/* {showDashboard && (
                 <li className="nav-item">
                   <Link to={"/dash"} className="nav-link">
                     Dashboard
                   </Link>
                 </li>
-              )}
+              )} */}
 
               {currentUser && (
                 <li className="nav-item">
@@ -113,7 +117,7 @@ class App extends Component {
               </div>
             )}
           </nav>
-
+            
           <div className="container mt-3">
             <Switch>
               <Route exact path={["/", "/home"]} component={Home} />
@@ -122,6 +126,7 @@ class App extends Component {
               <Route exact path="/profile" component={Profile} />
               <Route path="/user" component={BoardUser} />
               <Route path="/dash" component={DashBoard} />
+              <Route path="/add" component={AddTask} />
               <Route path="/admin" component={BoardAdmin} />
             </Switch>
           </div>
