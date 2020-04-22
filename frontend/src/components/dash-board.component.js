@@ -26,7 +26,7 @@ export default class BoardUser extends Component {
       this.searchOnChangeTimeSpent = this.searchOnChangeTimeSpent.bind(this);
 
       //this.setState({someValue:false});
-      this.setState({searchResult:"Nasrin"});
+      this.setState({searchResult:false});
 
       this.state = {
         currentUser: AuthService.getCurrentUser(),
@@ -124,13 +124,7 @@ export default class BoardUser extends Component {
       message: "",
       successful: false
     });
-    //this.form.validateAll();
-
-    //if (this.checkBtn.context._errors.length === 0) {
-    //let trimTaskDate = this.state.taskDate;
-    //trimTaskDate = String(trimTaskDate).substring(4, 16);
-    //console.log("ecd date is= "+this.state.ECDDate)
-
+   
     DashService.searchTask(
       this.state.searchTaskName,
       this.state.startDate,
@@ -141,7 +135,6 @@ export default class BoardUser extends Component {
       this.state.fromECDTime,
       this.state.toECDTime,
       this.state.searchTimeSpent,
-      this.state.searchUserId,
       this.state.searchTaskType,
       this.state.searchCustomerId,
       this.state.searchTaskstatusId
@@ -154,12 +147,6 @@ export default class BoardUser extends Component {
           searchResult : response
         });
 
-        
-        
-        //this.setState({someValue:false}); 
-        //this.refreshTaskList = response;
-        //` console.log(this.state.searchResult);
-        //this.state.contentTask=response;
       },
       error => {
         const resMessage =
@@ -280,7 +267,8 @@ export default class BoardUser extends Component {
                                     <span style={{ fontSize: 10 }}>Type</span>
                                     </InputGroupText>
                                     <InputGroup size="sm">
-                                    <select id="taskTypesId" className="form-control" value={this.state.inTaskType} searchOnChange={this.searchOnChangeTaskType}>
+                                    <select className="form-control" value={this.state.searchTaskType} onChange={this.searchOnChangeTaskType}>
+                                        <option value=""></option>
                                         {this.loadTaskTypes()}
                                     </select>
                                     </InputGroup>
@@ -342,6 +330,7 @@ export default class BoardUser extends Component {
                                     </InputGroupText>
                                     <InputGroup size="sm">
                                     <select id="customersId" className="form-control" value={this.state.searchCustomerId} onChange={this.searchOnChangeCustomerId}>
+                                        <option value=""></option>
                                         {this.loadCustomers()}
                                     </select>
                                     </InputGroup>
@@ -436,11 +425,13 @@ export default class BoardUser extends Component {
                                     <span style={{ fontSize: 10 }}>Status</span>
                                     </InputGroupText>
                                     <InputGroup size="sm">
-                                    <select id="taskStatusId" className="form-control" value={this.state.inTaskstatusId} onChange={this.searchOnChangeTaskstatusId}>
+                                    <select id="taskStatusId" className="form-control" value={this.state.searchTaskstatusId} onChange={this.searchOnChangeTaskstatusId}>
+                                        <option value=""></option>
                                         {this.loadTaskStatus()}
                                     </select>
                                     </InputGroup>
                                 </td>
+                                <td></td>
                                 <td></td>
                             </tr>
                             <tr>

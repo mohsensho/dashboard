@@ -23,7 +23,7 @@ exports.create = (req, res) => {
     numberOfResource: req.body.resourcenumber,
     numberOfRound: req.body.roundnumber,
     percentOfComplete: req.body.completepercent,
-    ECD: req.body.completepercent,
+    ECD: req.body.ECD,
     timeSpent: req.body.timespent,
     userId: req.body.userid,
     tasktypeId: req.body.tasktypeid,

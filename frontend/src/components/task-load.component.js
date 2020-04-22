@@ -9,10 +9,15 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCoffee } from "@fortawesome/free-solid-svg-icons";
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 
 export default class BoardUser extends Component {
     constructor({searchResult}) {
       super();
+
+      this.deleteTask = this.deleteTask.bind(this);
+      this.deleteTaskConfirm = this.deleteTaskConfirm.bind(this);
 
 
       this.state = {
@@ -64,6 +69,67 @@ export default class BoardUser extends Component {
         }
       );
     }
+    deleteTaskConfirm = (taskId) => {
+        confirmAlert({
+          title: 'Confirm To Delete',
+          message: 'Are you sure to do this?',
+          buttons: [
+            {
+              label: 'Yes',
+              onClick: () => {this.deleteTask(taskId)}
+            },
+            {
+              label: 'No',
+              //onClick: () => //alert('Click No')
+            }
+          ]
+        });
+      };
+
+    deleteTask(taskId) {
+        //e.preventDefault();
+        console.log("taskId is: "+ taskId);
+        this.setState({
+          message: "",
+          successful: false
+        });
+       
+        DashService.deleteTask(
+         taskId
+        ).then(
+          (response) => {
+            this.setState({
+                message: "Delete Result",
+                successful: true,
+                
+            });
+            this.componentDidMount();
+            //this.state.contentTask = response.data;
+        },
+
+          
+            // (response) => {
+            // this.setState({
+            //   message: "Delete Result",
+            //   successful: true,
+            //   //contentTask = response 
+            // });},
+
+          error => {
+            const resMessage =
+              (error.response &&
+                error.response.data &&
+                error.response.data.message) ||
+              error.message ||
+              error.toString();
+            this.setState({
+              successful: false,
+              message: resMessage
+            });
+          }
+        );
+      }
+
     loadTasks(){
         // if(searchResult !== null){
 
@@ -100,7 +166,13 @@ export default class BoardUser extends Component {
                         <div className={"badge "+ badgType} >{value.taskstatus.tStatus}</div>
                     </td>
                     <td><div className="badge badge-info" title={value.user.email}>i</div></td>
-                    <td></td>
+                    <td>
+                        <div style={{minWidth:"45px"}}>
+                            <button className="btn btn-warning" style={{cursor:"pointer", padding:"0 3px", float:"left", marginRight:"5px"}} title="Edit Task" onClick={() => this.editTask(value.id)}>...</button>
+                            <button className="btn btn-danger" style={{cursor:"pointer", padding:"0 5px", float:"left"}} title="Delete Task"  onClick={() => this.deleteTaskConfirm(value.id)}>x</button>
+                        </div>
+                        
+                    </td>
                 </tr>
 			);
 		})
@@ -146,7 +218,8 @@ export default class BoardUser extends Component {
                                 <td>%Complete</td>
                                 <td>Time Spent</td>
                                 <td>Status</td>
-                                <td>Created By</td>
+                                <td>By</td>
+                                <td></td>
                             </tr>
                             {this.loadTasks()}
                             <tr>

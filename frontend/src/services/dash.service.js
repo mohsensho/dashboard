@@ -23,14 +23,13 @@ class DashService {
     return axios.get(API_URL + "user", { headers: authHeader() });
   }
   addTask(taskName,inTaskDate,inResourceNum, inRoundNum, inCompleteNum, inECDDate, inTimeSpent, inUserId,inTaskType,inCustomerId,inTaskStatus) {
-    console.log("ecd date injast: "+inECDDate);
     return axios.post(API_URL, {
       "taskname": taskName,
       "taskdate": inTaskDate,
       "resourcenumber": inResourceNum,
       "roundnumber": inRoundNum,
       "completepercent": inCompleteNum,
-      "ecd": inECDDate,
+      "ECD": inECDDate,
       "timespent": inTimeSpent,
       "userid": inUserId,
       "tasktypeid": inTaskType,
@@ -41,7 +40,6 @@ class DashService {
   }
  searchTask(taskName,inStartDate,inEndDate,inResourceNum, inRoundNum, inCompleteNum, inFromECDTime, inToECDTime, inTimeSpent,inTaskType,inCustomerId,inTaskStatus) {
  
-  console.log("parameterhaaa: "+taskName+"  &  "+inStartDate+"  &  "+inEndDate+"  &  "+inResourceNum+"  &  "+ inRoundNum+"  &  "+ inCompleteNum+"  &  "+ inFromECDTime+"  &  "+ inToECDTime+"  &  "+ inTimeSpent+"  &  "+inTaskType+"  &  "+inCustomerId+"  &  "+inTaskStatus);
     return axios.get(API_URL, {
       params: {
         taskName: taskName,
@@ -61,6 +59,11 @@ class DashService {
     });
 
   }
+  deleteTask(taskId) {
+
+      return axios.delete(API_URL + "/" + taskId);
+  
+    }
   getAdminBoard() {
     return axios.get(API_URL + "admin", { headers: authHeader() });
   }

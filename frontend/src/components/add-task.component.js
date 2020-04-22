@@ -116,12 +116,7 @@ export default class BoardUser extends Component {
       message: "",
       successful: false
     });
-    //this.form.validateAll();
-
-  //if (this.checkBtn.context._errors.length === 0) {
-    //let trimTaskDate = this.state.taskDate;
-    //trimTaskDate = String(trimTaskDate).substring(4, 16);
-    console.log("ecd date is= "+this.state.ECDDate)
+    
     DashService.addTask(
       this.state.inTaskName,
       this.state.taskDate,
